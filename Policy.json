@@ -1,0 +1,27 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"rds:DescribeDBInstances",
+				"rds:StartDBInstance",
+				"rds:StopDBInstance",
+				"rds:DescribeDBClusters",
+				"rds:StartDBCluster",
+				"rds:StopDBCluster",
+				"rds:ListTagsForResource"
+			],
+			"Resource": "*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"logs:CreateLogGroup",
+				"logs:CreateLogStream",
+				"logs:PutLogEvents"
+			],
+			"Resource": "*"
+		}
+	]
+}
