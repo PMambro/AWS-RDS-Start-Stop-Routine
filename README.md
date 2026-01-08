@@ -27,7 +27,7 @@ This helps reduce costs by stopping unused databases during off-hours while allo
 
 ## Deployment Steps
 1. **Create the IAM Role**:
-   In AWS console, create a IAM role with the custom policy in [[Policy.JSON]]
+   In AWS console, create a IAM role with the custom policy in the file [Policy.json](Policy.json)
    
 
 2. **Install Dependencies**:
