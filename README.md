@@ -27,8 +27,8 @@ This helps reduce costs by stopping unused databases during off-hours while allo
 
 ## Deployment Steps
 1. **Create the IAM Role**:
-   In AWS console, create a new Lambda Function with the following configurations:
-   - 
+   In AWS console, create a IAM role with the custom policy in [[Policy.JSON]]
+   
 
 2. **Install Dependencies**:
    ```bash
