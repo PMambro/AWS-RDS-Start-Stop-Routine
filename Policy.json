@@ -10,7 +10,8 @@
 				"rds:DescribeDBClusters",
 				"rds:StartDBCluster",
 				"rds:StopDBCluster",
-				"rds:ListTagsForResource"
+				"rds:ListTagsForResource",
+				"tag:GetResources"
 			],
 			"Resource": "*"
 		},

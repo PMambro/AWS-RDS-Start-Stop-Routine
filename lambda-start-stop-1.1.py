@@ -1,12 +1,12 @@
 
 import boto3
 
-def _has_alwaysdown_yes(tags):
+def _off_schedule_yes(tags):
     """
-    Retorna True se existir tag ALWAYSDOWN com valor 'yes' (case-insensível).
+    Retorna True se existir tag OffSchedule com valor '1' (case-insensível).
     """
     for t in tags or []:
-        if t.get('Key') == 'ALWAYSDOWN' and str(t.get('Value', '')).strip().lower() == 'yes':
+        if t.get('Key') == 'OffSchedule' and str(t.get('Value', '')).strip().lower() == '1':
             return True
     return False
 
@@ -34,7 +34,7 @@ def lambda_handler(event, context):
     rds = boto3.client("rds")
     affected = {"instances": [], "clusters": []}
     tag_cache = {}  # cache de tags por ARN
-    alwaysdown_instance_ids = set()  # instâncias (de qualquer engine) com ALWAYSDOWN=yes
+    off_schedule_instance_ids = set()  # instâncias (de qualquer engine) com OffSchedule="1"
 
     # --- Instâncias RDS (inclui Aurora, mas só atuamos nas não-Aurora) ---
     paginator = rds.get_paginator("describe_db_instances")
@@ -44,18 +44,18 @@ def lambda_handler(event, context):
             engine = (db.get("Engine") or "").lower()
             status = db["DBInstanceStatus"]
 
-            # Verifica tag ALWAYSDOWN no nível da instância
+            # Verifica tag OffSchedule no nível da instância
             inst_tags = _list_tags(rds, db.get("DBInstanceArn"), tag_cache)
-            if _has_alwaysdown_yes(inst_tags):
-                alwaysdown_instance_ids.add(dbid)
-                print(f"[SKIP] Instance {dbid} possui tag ALWAYSDOWN=yes")
+            if _off_schedule_yes(inst_tags):
+                off_schedule_instance_ids.add(dbid)
+                print(f"[SKIP] Instance {dbid} possui tag OffSchedule=1")
                 # Se não for Aurora, também não agir
                 if "aurora" not in engine:
                     continue
 
             # Para Aurora, não agir aqui (será tratado via cluster)
             if "aurora" in engine:
-                # Mesmo que não tenha ALWAYSDOWN, não atuamos em instância Aurora aqui.
+                # Mesmo que não tenha OffSchedule, não atuamos em instância Aurora aqui.
                 continue
 
             # Ação para instâncias não-Aurora
@@ -81,16 +81,16 @@ def lambda_handler(event, context):
             if not engine.startswith("aurora"):
                 continue
 
-            # Verifica tag ALWAYSDOWN no cluster
+            # Verifica tag OffSchedule no cluster
             cluster_tags = _list_tags(rds, cl.get("DBClusterArn"), tag_cache)
-            cluster_has_alwaysdown = _has_alwaysdown_yes(cluster_tags)
+            cluster_has_off_schedule = _off_schedule_yes(cluster_tags)
 
-            # Se qualquer instância membro tiver ALWAYSDOWN=yes, também pular o cluster
+            # Se qualquer instância membro tiver OffSchedule=1, também pular o cluster
             member_ids = [m.get("DBInstanceIdentifier") for m in cl.get("DBClusterMembers", [])]
-            member_has_alwaysdown = any(m_id in alwaysdown_instance_ids for m_id in member_ids)
+            member_has_off_schedule = any(m_id in off_schedule_instance_ids for m_id in member_ids)
 
-            if cluster_has_alwaysdown or member_has_alwaysdown:
-                print(f"[SKIP] Cluster {cluster_id} marcado ALWAYSDOWN (cluster={cluster_has_alwaysdown}, member={member_has_alwaysdown})")
+            if cluster_has_off_schedule or member_has_off_schedule:
+                print(f"[SKIP] Cluster {cluster_id} marcado OffSchedule (cluster={cluster_has_off_schedule}, member={member_has_off_schedule})")
                 continue
 
             # Ação no cluster

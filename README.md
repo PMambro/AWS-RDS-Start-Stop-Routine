@@ -1,7 +1,7 @@
 # AWS RDS/Aurora Start-Stop Routine
 
 ## Overview
-This project provides an automated solution to **start and stop all Amazon RDS and Aurora instances** in an AWS account using an **AWS Lambda function**, except those explicitly tagged with:
+This project provides an automated solution to implement a  **start and stop routine in all Amazon RDS and Aurora instances** in an AWS account using an **AWS Lambda function**, except those explicitly tagged with:
 
 ```
 ALWAYSDOWN = yes
@@ -13,28 +13,22 @@ This helps reduce costs by stopping unused databases during off-hours while allo
 
 ## Architecture
 - **AWS Lambda**: Executes the start/stop logic.
-- **Amazon EventBridge (CloudWatch Events)**: Triggers the Lambda function on a schedule (e.g., start at 08:00, stop at 20:00).
-- **AWS SDK (boto3)**: Interacts with RDS and Aurora instances.
+- **Amazon EventBridge (CloudWatch Events)**: Triggers the Lambda function on a schedule (e.g., start at 05:00, stop at 20:00).
+- **AWS SDK (boto3)**: Interacts with RDS and Aurora instances, getting the instances status and tags, and executing the scheduler.
 - **Tag Filtering**: Skips instances with `ALWAYSDOWN = yes`.
-
-![Architecture Diagram](docs/architecture.png) *(Optional: Add diagram if available)*
 
 ---
 
 ## Prerequisites
-- AWS Account with permissions to manage RDS/Aurora.
-- IAM Role for Lambda with the following policies:
-  - `AmazonRDSFullAccess` (or custom policy with `rds:StartDBInstance`, `rds:StopDBInstance`, `rds:DescribeDBInstances`).
+- AWS Account with permissions to manage RDS/Aurora, IAM Policies and Roles, Lambdas and EventBridge.
 - Python 3.x runtime for Lambda.
 
 ---
 
 ## Deployment Steps
-1. **Clone the Repository**:
-   ```bash
-   git clone <repo-url>
-   cd <repo-folder>
-   ```
+1. **Create the IAM Role**:
+   In AWS console, create a new Lambda Function with the following configurations:
+   - 
 
 2. **Install Dependencies**:
    ```bash
