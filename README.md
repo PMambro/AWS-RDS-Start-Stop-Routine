@@ -35,9 +35,6 @@ This helps reduce costs by stopping unused databases during off-hours while allo
   - Desativate the **"Rule creation experience"** to facilitate
   - Step 1: Insert the name and description for your rule, and disable the rule on the selected events (Bottom of the page)
   - Step 2: 
-   ```bash
-   pip install -r requirements.txt
-   ```
 
 3. **Create the Lambda Function**:
   - Select **"Author from Scratch"**
@@ -46,11 +43,6 @@ This helps reduce costs by stopping unused databases during off-hours while allo
   - In **"Change default execution role"** select **"Use an existing role"** and choose the role you created o step 1
   - You can create it with all the other options can stay with the default settings
   - Once the function is created, paste the Python script from file [lambda-start-stop-1.1.py](lambda-start-stop-1.1.py) into the tab **"code"** > **lambda_function.py**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-
 
 
 4. **Set Environment Variables** (optional):
